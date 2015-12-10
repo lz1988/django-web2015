@@ -1,0 +1,38 @@
+﻿{% include 'webhead.html' %}
+
+
+	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h2 class="sub-header">文章管理</h2>
+          <div class="table-responsive">
+			<div class="panel panel-default">
+			<div class="panel-body">
+				<a href="/web/article_add"> <button type="button" class="btn btn-default"">新增用户</button></a>
+			</div>
+			</div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>用户名</th>
+                  <th>密码</th>
+				  				<th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+			       {% for v in record_list %}
+                <tr>
+                  <td>{{ v.id }}</td>
+                  <td>{{ v.username}}</td>
+                  <td>{{ v.password}}</td>
+				  <td><a href="/web/user_edit/id/{{ v.id }}">修改</a>&nbsp;&nbsp;<a href="/web/article_delete/id/{{ v.id }}">删除</a></td>
+                </tr>
+				{% endfor %}
+				
+              </tbody>
+            </table>
+			{% include 'webcurpage.html' %}
+          </div>
+	</div>
+     		 
+
+{% include 'webfooter.html' %}

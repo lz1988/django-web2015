@@ -1,0 +1,53 @@
+﻿{% include 'webhead.html' %}
+
+
+	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h3 class="sub-header">文章管理</h3>
+          <div class="table-responsive">
+			<div class="panel panel-default">
+			<div class="panel-body">
+				<a href="/web/article_add"> <button type="button" class="btn btn-default"">发布文章 »</button></a>
+			</div>
+			</div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>文章标题</th>
+                  <th>文章类别</th>
+                  <th>文章作者</th>
+                  <th>文章内容</th>
+                  <th>发表时间</th>
+				  <th>状态</th>
+				  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+			       {% for v in record_list %}
+                <tr>
+                  <td>{{ v.0 }}</td>
+                  <td>{{ v.1}}</td>
+                  <td>{{ v.12}}</td>
+                  <td>{{ v.3 }}</td>
+                  <td>{{ v.2|striptags|slice:"20"}}</td>
+                  <td>{{ v.8|date:"Y-m-d H:i:s"}}</td>
+				  <td>
+				  {% if v.10 == 1 %}
+				  删除
+				  {%else%}
+				  启用
+				  {%endif%}
+				  </td>
+				  <td><a href="/web/article_edit/id/{{ v.0 }}">修改</a>
+				  	&nbsp;&nbsp;<a href="/web/article_delete/id/{{ v.0 }}">删除</a></td>
+                </tr>
+				{% endfor %}
+				
+              </tbody>
+            </table>
+			{% include 'webcurpage.html' %}
+          </div>
+	</div>
+     		 
+
+{% include 'webfooter.html' %}

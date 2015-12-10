@@ -1,0 +1,23 @@
+﻿
+{% include 'webhead.html' %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	<h2 class="sub-header">类别修改</h2>
+    <form class="form-horizontal" action="/web/webcategory_editmod" method="post">
+      <table class="table table-bordered table-striped">
+            <tbody>
+              <tr>
+                <td>
+                  类别名称
+                </td>
+                <td><input type="text" name="typename" class="form-control" value="{{ news_detail.typename}}" /></td>
+              </tr>
+			
+			   <tr align="center">
+			   <input type="hidden" name="id" value="{{ news_detail.id }}"/>
+                <td colspan="2"><input type="submit" name="submit" value="修改"/></td>
+              </tr>
+            </tbody>
+          </table>
+    </form>
+	</div>
+	

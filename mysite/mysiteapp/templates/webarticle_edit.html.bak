@@ -1,0 +1,52 @@
+
+{% include 'webhead.html' %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	<h4 class="sub-header">文章修改</h2>
+    <form class="form-horizontal" action="/web/article_editmod" method="post">
+      <table class="table table-bordered table-striped">
+            <tbody>
+              <tr>
+                <td>
+                  标题
+                </td>
+                <td><input type="text" name="title" class="form-control" value="{{ news_detail.newtitle}}" /></td>
+              </tr>
+			   <tr>
+                <td>
+                  类别
+                </td>
+                <td>
+				<select name="newtype">
+				{% for v in item_list %}
+				<option value="{{ v.id}}" {% if v.id == news_detail.newtype %} selected {% endif %} >{{ v.typename }}</option>
+				{% endfor %}
+				</select>
+				</td>
+              </tr>
+              <tr>
+                <td>
+                  作者
+                </td>
+                <td><input type="text" name="author" class="form-control" value="{{ news_detail.author}}" /></td>
+              </tr>
+              <tr>
+                <td>
+                  内容
+                </td>
+                <td><textarea type="text" rows="8" style="width:99%" name="content">{{ news_detail.newcontent }}</textarea></td>
+              </tr>
+              <tr>
+                <td>
+                  状态
+                </td>
+                <td><select class="form-control" name="isdel"><option value="0" {% if news_detail.isdel == 0 %} selected {% endif %}>启用</option><option value="1" {% if news_detail.isdel == 1 %} selected {% endif %}>删除</option></select></td>
+              </tr>
+			   <tr align="center">
+			   <input type="hidden" name="id" value="{{ news_detail.id }}"/>
+                <td colspan="2"><input type="submit" name="submit" value="修改"/></td>
+              </tr>
+            </tbody>
+          </table>
+    </form>
+	</div>
+	

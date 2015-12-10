@@ -1,0 +1,177 @@
+# Create your views here.
+# -*- coding: utf-8 -*-
+from django.http import HttpResponse,Http404
+from django.shortcuts import render_to_response,RequestContext
+from mysiteapp.models import loftk_articles,loftk_newtype,user,loftk_articlesManager
+from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
+from mysiteapp import pub
+from django.core.mail import send_mail,BadHeaderError
+import datetime
+from django.db import connection
+from django.http import HttpResponseRedirect  
+#from django.db import connection
+
+#connection.queries
+
+
+def webadmin(request):
+	return render_to_response('weblogin.html')
+	
+def webuser(request):
+	item_list = loftk_articles.objects.order_by("-id")
+	paginator = Paginator(item_list,10)
+	p = request.GET.get('page','')
+ 
+	try:
+		items = paginator.page(p)
+	except PageNotAnInteger:
+		items = paginator.page(1)
+	except EmptyPage:
+		items = paginator.page(paginator.num_pages)
+			
+	return render_to_response('news.html',{'record_list':items})
+	
+def webarticle(request):
+	#item_list = loftk_articles.objects.order_by("-id")
+	item_list = loftk_articles.loftk_articles_objects.getlist()
+	print item_list
+	#cursor = connection.cursor()
+	#cursor.execute("""select a.*,t.typename from mysiteapp_loftk_articles  as a join mysiteapp_loftk_newtype as t on a.newtype=t.id""")
+	#item_list=cursor.fetchall()
+	#print item_list
+	#obj = loftk_articlesManager()
+	#item_list = obj.getlist()
+	#cursor = connection.cursor()
+	#cursor.execute("select * from mysiteapp_loftk_articles")
+	#item_list = cursor.fetchall()
+
+	paginator = Paginator(item_list,20)
+	p = request.GET.get('page','')
+ 
+	try:
+		items = paginator.page(p)
+	except PageNotAnInteger:
+		items = paginator.page(1)
+	except EmptyPage:
+		items = paginator.page(paginator.num_pages)
+			
+	return render_to_response('webnews.html',{'record_list':items,'item_list':item_list})
+	
+def article_edit(request, id):
+	news_detail = loftk_articles.objects.get(id=int(id))
+	item_list = loftk_newtype.objects.all()
+	return render_to_response('webarticle_edit.html',{'news_detail':news_detail,'item_list':item_list})
+	
+def article_editmod(request):
+	now = datetime.datetime.now()
+	id = request.POST.get('id')  
+	title = request.POST.get('title')
+	content = request.POST.get('content')
+	author = request.POST.get('author')
+	isdel = request.POST.get('isdel')
+	newtype = request.POST.get('newtype')
+	#loftk_articles = loftk_articles.objects.get(id=id)
+	#loftk_articles.title = title
+	#loftk_articles.newcontent = content
+	#loftk_articles.author = author
+	#loftk_articles.isdel = isdel
+		
+	loftk_articles.objects.filter(id=id).update(newtitle=title,author=author,newcontent=content,isdel=isdel,newtype=newtype,lastmodify=now)
+	#loftk_articles.lastmodify = now
+	#loftk_articles.save()
+	#print connection.queries
+	return HttpResponseRedirect("/webarticle/")
+	
+def article_delete(request, id):
+	loftk_articles.objects.filter(id=id).delete()
+	return HttpResponseRedirect("/webarticle/")
+	
+def article_add(request):
+	i = connection.queries
+	item_list = loftk_newtype.objects.all()
+	print item_list.query
+	return render_to_response('webarticle_add.html',{'item_list':item_list})
+
+def article_addmod(request):
+	title = request.POST.get('title')
+	content = request.POST.get('content')
+	author = request.POST.get('author')
+	isdel = request.POST.get('isdel')
+	newtype = request.POST.get('newtype')
+	p = loftk_articles(newtitle=title,author=author,newcontent=content,isdel=isdel,newtype=newtype)
+	p.save();
+	connection.queries
+	return HttpResponseRedirect("/webarticle/")
+
+def webuser(request):
+	item_list = user.objects.order_by("-id")
+	
+	paginator = Paginator(item_list,30)
+	p = request.GET.get('page','')
+ 
+	try:
+		items = paginator.page(p)
+	except PageNotAnInteger:
+		items = paginator.page(1)
+	except EmptyPage:
+		items = paginator.page(paginator.num_pages)
+			
+	return render_to_response('webuser.html',{'record_list':items,'item_list':item_list})
+		
+def user_edit(request, id):
+	news_detail = user.objects.get(id=int(id))
+	return render_to_response('webuser_edit.html',{'news_detail':news_detail})
+		
+def user_editmod(request):
+	now = datetime.datetime.now()
+	id = request.POST.get('id')  
+	username = request.POST.get('username')
+	password = request.POST.get('password')
+	user.objects.filter(id=id).update(username=username,password=password)
+	connection.queries
+	return HttpResponseRedirect("/webuser/")
+	
+def user_add(request):
+	return render_to_response('webuser_add.html')
+
+def user_delete(request, id):
+	user.objects.filter(id=id).delete()
+	return HttpResponseRedirect("/webuser/")
+		
+def user_addmod(request):
+	username = request.POST.get('username')
+	password = request.POST.get('password')
+	p = user(username=username,password=password)
+	p.save();
+	#print connection.queries
+	return HttpResponseRedirect("/webuser/")	
+
+def webcategory(request):
+	item_list = loftk_newtype.objects.order_by("-id")
+	
+	paginator = Paginator(item_list,30)
+	p = request.GET.get('page','')
+ 
+	try:
+		items = paginator.page(p)
+	except PageNotAnInteger:
+		items = paginator.page(1)
+	except EmptyPage:
+		items = paginator.page(paginator.num_pages)
+			
+	return render_to_response('webcategory.html',{'record_list':items,'item_list':item_list})
+
+def webcategoryedit(request, id):
+	news_detail = loftk_newtype.objects.get(id=int(id))
+	return render_to_response('webcategory_edit.html',{'news_detail':news_detail})
+
+def webcategory_editmod(request):
+	id = request.POST.get('id')  
+	typename = request.POST.get('typename')
+	loftk_newtype.objects.filter(id=id).update(typename=typename)
+	return HttpResponseRedirect("/webcategory/")
+
+def webcategory_delete(request, id):
+	loftk_newtype.objects.filter(id=id).delete()
+	return HttpResponseRedirect("/webcategory/")
+	
